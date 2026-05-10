@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BiblioCECAR</title>
+<style>
+:root {
+  --green-dark:  #1a5c2e;
+  --green:       #2e8b4f;
+  --green-mid:   #3aab62;
+  --green-light: #e8f5ee;
+  --green-glow:  #56c97880;
+  --white:       #ffffff;
+  --off-white:   #f7faf8;
+  --border:      #d0e8d8;
+  --text:        #1a2e22;
+  --muted:       #6b8c78;
+  --shadow:      0 4px 24px rgba(30,90,50,.13);
+  --shadow-sm:   0 2px 10px rgba(30,90,50,.09);
+  --radius:      12px;
+  --radius-sm:   8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off-white);color:var(--text);min-height:100vh}
+ 
+/* ── ANIMATIONS ── */
+@keyframes fadeIn   {from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn  {from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes popIn    {from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse    {0%,100%{box-shadow:0 0 0 0 var(--green-glow)}50%{box-shadow:0 0 0 8px transparent}}
+@keyframes spin     {to{transform:rotate(360deg)}}
+@keyframes ripple   {to{transform:scale(4);opacity:0}}
+ 
+.anim-fade  {animation:fadeIn .45s ease both}
+.anim-slide {animation:slideIn .4s ease both}
+.anim-pop   {animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both}
+ 
+/* ── LOGIN PAGE ── */
+#loginPage {
+  display:flex;
+  min-height:100vh;
+  background: linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,var(--green-mid) 100%);
+}
+.login-left {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:60px 40px;
+  position:relative;
+  overflow:hidden;
+}
+.login-left::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.login-logo-area {
+  position:relative;
+  text-align:center;
+  color:white;
+}
+.login-logo-area img {
+  width:110px;
+  height:auto;
+  border-radius:16px;
+  background:white;
+  padding:10px;
+  box-shadow:var(--shadow);
+  margin-bottom:24px;
+}
+.login-logo-area h1 {
+  font-size:42px;
+  font-weight:800;
+  letter-spacing:-1px;
+  line-height:1;
+  margin-bottom:10px;
+}
+.login-logo-area h1 span {color:rgba(255,255,255,.65)}
+.login-logo-area p {
+  font-size:15px;
+  color:rgba(255,255,255,.7);
+  max-width:320px;
+  line-height:1.6;
+}
+.login-book-img {
+  margin-top:40px;
+  width:260px;
+  border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  opacity:.9;
+}
+ 
+.login-right {
+  width:440px;
+  background:white;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:60px 48px;
+  box-shadow:-8px 0 40px rgba(0,0,0,.15);
+}
+.login-right h2 {
+  font-size:26px;
+  font-weight:700;
+  color:var(--green-dark);
+  margin-bottom:6px;
+}
+.login-right p.sub {
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:36px;
+}
+.form-group {
+  margin-bottom:20px;
+}
+.form-group label {
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  margin-bottom:7px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width:100%;
+  padding:12px 16px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:14px;
+  color:var(--text);
+  background:var(--off-white);
+  transition:border-color .2s, box-shadow .2s;
+  outline:none;
+  font-family:inherit;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(46,139,79,.15);
+  background:white;
+}
+.btn {
+  position:relative;
+  overflow:hidden;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:12px 24px;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:transform .15s, box-shadow .2s, filter .2s;
+  font-family:inherit;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary {
+  background:linear-gradient(135deg,var(--green-dark),var(--green));
+  color:white;
+  box-shadow:0 4px 16px rgba(46,139,79,.35);
+}
+.btn-primary:hover {
+  box-shadow:0 6px 24px rgba(46,139,79,.5);
+  filter:brightness(1.08);
+}
+.btn-secondary {
+  background:var(--green-light);
+  color:var(--green-dark);
+  border:1.5px solid var(--border);
+}
+.btn-secondary:hover{background:#d4efdf}
+.btn-danger {
+  background:#fef2f2;
+  color:#c0392b;
+  border:1.5px solid #fcd5d5;
+}
+.btn-danger:hover{background:#fde8e8}
+.btn-full{width:100%}
+.btn-sm{padding:8px 16px;font-size:13px}
+ 
+/* Ripple */
+.btn .ripple {
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.35);
+  width:60px;height:60px;
+  margin-top:-30px;margin-left:-30px;
+  animation:ripple .6s linear;
+  pointer-events:none;
+}
+ 
+/* ── APP SHELL (hidden until login) ── */
+#appShell{display:none;min-height:100vh;flex-direction:column}
+ 
+/* TOPBAR */
+.topbar {
+  height:64px;
+  background:var(--green-dark);
+  display:flex;
+  align-items:center;
+  padding:0 24px;
+  gap:16px;
+  position:sticky;
+  top:0;
+  z-index:200;
+  box-shadow:0 2px 12px rgba(0,0,0,.2);
+}
+.topbar-logo {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+}
+.topbar-logo img {
+  height:38px;
+  width:auto;
+  border-radius:8px;
+  background:white;
+  padding:4px;
+}
+.topbar-logo span {
+  color:white;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.5px;
+}
+.topbar-logo span em {color:rgba(255,255,255,.55);font-style:normal}
+.topbar-spacer{flex:1}
+.topbar-user {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:white;
+  font-size:14px;
+}
+.topbar-user .avatar {
+  width:36px;height:36px;
+  background:var(--green-mid);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:15px;
+  border:2px solid rgba(255,255,255,.3);
+}
+.topbar-role {
+  font-size:11px;
+  background:rgba(255,255,255,.15);
+  border-radius:20px;
+  padding:3px 10px;
+  color:rgba(255,255,255,.85);
+}
+.topbar-logout {
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  color:white;
+  border-radius:var(--radius-sm);
+  padding:7px 14px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .2s;
+}
+.topbar-logout:hover{background:rgba(255,255,255,.22)}
+ 
+/* LAYOUT */
+.app-body {
+  display:flex;
+  flex:1;
+}
+.sidebar {
+  width:240px;
+  background:white;
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  padding:20px 0;
+  position:sticky;
+  top:64px;
+  height:calc(100vh - 64px);
+  overflow-y:auto;
+}
+.sidebar-section {
+  padding:6px 16px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-top:12px;
+}
+.sidebar-link {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 20px;
+  font-size:14px;
+  color:var(--muted);
+  cursor:pointer;
+  border-radius:0;
+  transition:background .15s, color .15s;
+  border-left:3px solid transparent;
+  user-select:none;
+}
+.sidebar-link:hover {
+  background:var(--green-light);
+  color:var(--green-dark);
+}
+.sidebar-link.active {
+  background:var(--green-light);
+  color:var(--green-dark);
+  font-weight:600;
+  border-left-color:var(--green);
+}
+.sidebar-link .icon{font-size:18px;width:22px;text-align:center}
+ 
+/* MAIN CONTENT */
+.main-content {
+  flex:1;
+  padding:32px;
+  overflow-x:hidden;
+}
+.page-header {
+  margin-bottom:28px;
+}
+.page-header h2 {
+  font-size:24px;
+  font-weight:700;
+  color:var(--green-dark);
+  margin-bottom:4px;
+}
+.page-header p {color:var(--muted);font-size:14px}
+ 
+/* CARDS */
+.cards-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:18px;
+  margin-bottom:32px;
+}
+.stat-card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px 24px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .2s, box-shadow .2s;
+  cursor:default;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-icon {
+  width:48px;height:48px;
+  border-radius:12px;
+  background:var(--green-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
+}
+.stat-info .num {
+  font-size:26px;
+  font-weight:800;
+  color:var(--green-dark);
+  line-height:1;
+}
+.stat-info .lbl {
+  font-size:12px;
+  color:var(--muted);
+  margin-top:3px;
+}
+ 
+/* MODULE SHORTCUT CARDS */
+.modules-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:16px;
+}
+.module-card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:transform .2s, box-shadow .2s, border-color .2s;
+  box-shadow:var(--shadow-sm);
+}
+.module-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow);
+  border-color:var(--green);
+}
+.module-card .mc-icon{font-size:32px;margin-bottom:12px}
+.module-card .mc-name{font-size:14px;font-weight:600;color:var(--green-dark)}
+.module-card .mc-desc{font-size:12px;color:var(--muted);margin-top:4px}
+ 
+/* CONTENT PAGES */
+.content-page{display:none}
+.content-page.active{display:block;animation:fadeIn .3s ease}
+ 
+/* TABLE */
+.table-wrap{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.table-toolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.table-toolbar input{
+  flex:1;min-width:200px;
+  padding:9px 14px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:13px;outline:none;
+  transition:border-color .2s;
+}
+.table-toolbar input:focus{border-color:var(--green)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--green-dark);color:white}
+th{padding:12px 16px;text-align:left;font-size:13px;font-weight:600}
+td{padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text)}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--green-light)}
+tbody tr:last-child td{border-bottom:none}
+.badge{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+}
+.badge-green{background:#d4edda;color:#1a5c2e}
+.badge-red{background:#fde8e8;color:#c0392b}
+.badge-blue{background:#dbeafe;color:#1e3a8a}
+.badge-gold{background:#fef3cd;color:#92620a}
+ 
+/* FORM CARD */
+.form-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px 32px;
+  box-shadow:var(--shadow-sm);
+  margin-bottom:24px;
+}
+.form-card h3{
+  font-size:17px;font-weight:700;
+  color:var(--green-dark);
+  margin-bottom:20px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--border);
+}
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+ 
+/* TOAST */
+#toast{
+  position:fixed;
+  bottom:28px;right:28px;
+  background:var(--green-dark);
+  color:white;
+  padding:14px 22px;
+  border-radius:var(--radius-sm);
+  font-size:14px;
+  font-weight:500;
+  z-index:9999;
+  box-shadow:0 8px 30px rgba(0,0,0,.2);
+  transform:translateY(80px);
+  opacity:0;
+  transition:transform .3s, opacity .3s;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+#toast.show{transform:translateY(0);opacity:1}
+ 
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(3px);
+  z-index:500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:white;
+  border-radius:var(--radius);
+  padding:32px;
+  width:500px;
+  max-width:95vw;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  animation:popIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+.modal h3{
+  font-size:18px;font-weight:700;
+  color:var(--green-dark);
+  margin-bottom:20px;
+}
+.modal-footer{
+  display:flex;gap:10px;
+  justify-content:flex-end;
+  margin-top:24px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+}
+ 
+/* LOADING */
+.spinner{
+  width:20px;height:20px;
+  border:3px solid rgba(255,255,255,.3);
+  border-top-color:white;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:inline-block;
+}
+ 
+/* ERROR */
+.error-msg{
+  color:#c0392b;
+  font-size:12px;
+  margin-top:5px;
+  display:none;
+}
+ 
+/* Empty state */
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--muted);
+}
+.empty-state .ei{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+ 
+@media(max-width:768px){
+  #loginPage{flex-direction:column}
+  .login-left{padding:40px 24px 20px}
+  .login-book-img{display:none}
+  .login-right{width:100%;padding:32px 24px}
+  .sidebar{display:none}
+  .main-content{padding:20px 16px}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+ 
+<!-- ════════════════ LOGIN ════════════════ -->
+<div id="loginPage">
+  <div class="login-left">
+    <div class="login-logo-area anim-fade">
+      <img src="logo-cecar-corporacion-universitaria-del-caribe.webp" alt="CECAR" onerror="this.style.display='none'"/>
+      <h1>Biblio<span>CECAR</span></h1>
+      <p>Sistema de gestión integral de biblioteca universitaria — CECAR</p>
+    </div>
+    <img src="images.png" alt="Biblioteca" class="login-book-img anim-fade" style="animation-delay:.2s" onerror="this.style.display='none'"/>
+  </div>
+ 
+  <div class="login-right anim-slide">
+    <h2>Iniciar Sesión</h2>
+    <p class="sub">Ingresa tus credenciales para acceder al sistema</p>
+ 
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" id="loginEmail" placeholder="correo@cecar.edu.co"/>
+      <span class="error-msg" id="emailErr">Ingresa un correo válido</span>
+    </div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••"/>
+      <span class="error-msg" id="passErr">La contraseña es obligatoria</span>
+    </div>
+    <div class="form-group">
+      <label>Rol de acceso</label>
+      <select id="loginRole">
+        <option value="admin">Administrador</option>
+        <option value="bibliotecario">Bibliotecario / Operador</option>
+        <option value="consulta">Consulta / Invitado</option>
+      </select>
+    </div>
+ 
+    <button class="btn btn-primary btn-full" onclick="doLogin(event)" id="loginBtn">
+      Ingresar al sistema
+    </button>
+ 
+    <p style="margin-top:20px;font-size:12px;color:var(--muted);text-align:center">
+      API REST: <a href="https://api.smartbooks.cecar.cloud/index.html" target="_blank" style="color:var(--green)">api.smartbooks.cecar.cloud</a>
+    </p>
+  </div>
+</div>
+ 
+<!-- ════════════════ APP SHELL ════════════════ -->
+<div id="appShell" style="display:none;flex-direction:column">
+ 
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a class="topbar-logo" href="#" onclick="showPage('dashboard');return false">
+      <img src="logo-cecar-corporacion-universitaria-del-caribe.webp" alt="CECAR" onerror="this.style.display='none'"/>
+      <span>Biblio<em>CECAR</em></span>
+    </a>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-user">
+      <div class="avatar" id="userAvatar">A</div>
+      <div>
+        <div id="userNameDisplay">Usuario</div>
+        <div class="topbar-role" id="userRoleDisplay">Administrador</div>
+      </div>
+    </div>
+    <button class="topbar-logout" onclick="doLogout()">Cerrar sesión</button>
+  </header>
+ 
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-section">Principal</div>
+      <div class="sidebar-link active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <span class="icon">🏠</span> Dashboard
+      </div>
+ 
+      <div class="sidebar-section">Gestión</div>
+      <div class="sidebar-link" onclick="showPage('libros')" id="nav-libros">
+        <span class="icon">📚</span> Libros
+      </div>
+      <div class="sidebar-link" onclick="showPage('clientes')" id="nav-clientes">
+        <span class="icon">👥</span> Clientes
+      </div>
+      <div class="sidebar-link" onclick="showPage('ventas')" id="nav-ventas">
+        <span class="icon">🛒</span> Ventas
+      </div>
+      <div class="sidebar-link" onclick="showPage('inventario')" id="nav-inventario">
+        <span class="icon">📦</span> Inventario
+      </div>
+      <div class="sidebar-link" onclick="showPage('ingresos')" id="nav-ingresos">
+        <span class="icon">📥</span> Ingresos
+      </div>
+      <div class="sidebar-link" onclick="showPage('lotes')" id="nav-lotes">
+        <span class="icon">🏷️</span> Lotes
+      </div>
+ 
+      <div class="sidebar-section admin-only" id="sec-admin">Admin</div>
+      <div class="sidebar-link admin-only" onclick="showPage('usuarios')" id="nav-usuarios">
+        <span class="icon">⚙️</span> Usuarios
+      </div>
+    </nav>
+ 
+    <!-- MAIN -->
+    <main class="main-content">
+ 
+      <!-- DASHBOARD -->
+      <div class="content-page active" id="page-dashboard">
+        <div class="page-header anim-fade">
+          <h2>Dashboard</h2>
+          <p>Resumen general del sistema BiblioCECAR</p>
+        </div>
+        <div class="cards-grid anim-fade">
+          <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-info"><div class="num" id="statLibros">—</div><div class="lbl">Libros registrados</div></div></div>
+          <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-info"><div class="num" id="statStock">—</div><div class="lbl">Unidades en stock</div></div></div>
+          <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><div class="num" id="statClientes">—</div><div class="lbl">Clientes registrados</div></div></div>
+          <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-info"><div class="num" id="statVentas">—</div><div class="lbl">Ventas realizadas</div></div></div>
+        </div>
+ 
+        <h3 style="font-size:16px;font-weight:700;color:var(--green-dark);margin-bottom:16px">Acceso rápido a módulos</h3>
+        <div class="modules-grid anim-fade" style="animation-delay:.1s">
+          <div class="module-card" onclick="showPage('libros')"><div class="mc-icon">📚</div><div class="mc-name">Libros</div><div class="mc-desc">Catálogo y stock</div></div>
+          <div class="module-card" onclick="showPage('clientes')"><div class="mc-icon">👥</div><div class="mc-name">Clientes</div><div class="mc-desc">Registro y consulta</div></div>
+          <div class="module-card" onclick="showPage('ventas')"><div class="mc-icon">🛒</div><div class="mc-name">Ventas</div><div class="mc-desc">Registrar y consultar</div></div>
+          <div class="module-card" onclick="showPage('inventario')"><div class="mc-icon">📦</div><div class="mc-name">Inventario</div><div class="mc-desc">Stock por lote</div></div>
+          <div class="module-card" onclick="showPage('ingresos')"><div class="mc-icon">📥</div><div class="mc-name">Ingresos</div><div class="mc-desc">Entradas al inventario</div></div>
+          <div class="module-card" onclick="showPage('lotes')"><div class="mc-icon">🏷️</div><div class="mc-name">Lotes</div><div class="mc-desc">Gestión de lotes</div></div>
+          <div class="module-card admin-only" onclick="showPage('usuarios')"><div class="mc-icon">⚙️</div><div class="mc-name">Usuarios</div><div class="mc-desc">Administrar accesos</div></div>
+        </div>
+      </div>
+ 
+      <!-- LIBROS -->
+      <div class="content-page" id="page-libros">
+        <div class="page-header anim-fade">
+          <h2>📚 Gestión de Libros</h2>
+          <p>Consulta, registra y actualiza el catálogo de libros</p>
+        </div>
+        <div class="form-card anim-fade">
+          <h3>Registrar / Actualizar Libro</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Nombre *</label><input type="text" placeholder="Ej. Cálculo Integral"/></div>
+            <div class="form-group"><label>Nivel</label><input type="text" placeholder="Ej. Universitario"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Edición</label><input type="text" placeholder="Ej. 3ra edición"/></div>
+            <div class="form-group"><label>Unidades</label><input type="number" placeholder="0" min="0"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Valor de compra ($)</label><input type="number" placeholder="0.00" step="0.01"/></div>
+            <div class="form-group"><label>Valor de venta ($)</label><input type="number" placeholder="0.00" step="0.01"/></div>
+          </div>
+          <div class="form-group"><label>Lote</label><input type="text" placeholder="Ej. LOTE-2026-A"/></div>
+          <div style="display:flex;gap:10px;margin-top:8px">
+            <button class="btn btn-primary" onclick="rippleBtn(this);showToast('✅ Libro guardado correctamente')">Guardar libro</button>
+            <button class="btn btn-secondary" onclick="rippleBtn(this)">Limpiar</button>
+          </div>
+        </div>
+        <div class="table-wrap anim-fade" style="animation-delay:.15s">
+          <div class="table-toolbar">
+            <input type="text" placeholder="🔍 Buscar por nombre, nivel o edición..." oninput="filterTable(this,'tblLibros')"/>
+            <button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">Exportar</button>
+          </div>
+          <table id="tblLibros">
+            <thead><tr><th>Nombre</th><th>Nivel</th><th>Edición</th><th>Stock</th><th>Venta ($)</th><th>Lote</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td>Cálculo Integral</td><td>Universitario</td><td>3ra</td><td><span class="badge badge-green">24</span></td><td>$85.000</td><td>LOTE-A</td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">✏️</button> <button class="btn btn-danger btn-sm" onclick="rippleBtn(this)">🗑️</button></td></tr>
+              <tr><td>Álgebra Lineal</td><td>Universitario</td><td>2da</td><td><span class="badge badge-gold">5</span></td><td>$72.000</td><td>LOTE-B</td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">✏️</button> <button class="btn btn-danger btn-sm" onclick="rippleBtn(this)">🗑️</button></td></tr>
+              <tr><td>Física I</td><td>Básico</td><td>1ra</td><td><span class="badge badge-red">0</span></td><td>$95.000</td><td>LOTE-A</td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">✏️</button> <button class="btn btn-danger btn-sm" onclick="rippleBtn(this)">🗑️</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+ 
+      <!-- CLIENTES -->
+      <div class="content-page" id="page-clientes">
+        <div class="page-header anim-fade"><h2>👥 Gestión de Clientes</h2><p>Registra y consulta los clientes del sistema</p></div>
+        <div class="form-card anim-fade">
+          <h3>Registrar / Actualizar Cliente</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Identificación *</label><input type="text" placeholder="No. de cédula"/></div>
+            <div class="form-group"><label>Nombres completos *</label><input type="text" placeholder="Nombre y apellidos"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Correo electrónico *</label><input type="email" placeholder="correo@ejemplo.com"/></div>
+            <div class="form-group"><label>Celular</label><input type="tel" placeholder="300 000 0000"/></div>
+          </div>
+          <div class="form-group"><label>Fecha de nacimiento</label><input type="date"/></div>
+          <div style="display:flex;gap:10px;margin-top:8px">
+            <button class="btn btn-primary" onclick="rippleBtn(this);showToast('✅ Cliente guardado correctamente')">Guardar cliente</button>
+            <button class="btn btn-secondary" onclick="rippleBtn(this)">Limpiar</button>
+          </div>
+        </div>
+        <div class="table-wrap anim-fade" style="animation-delay:.15s">
+          <div class="table-toolbar">
+            <input type="text" placeholder="🔍 Buscar por nombre o identificación..." oninput="filterTable(this,'tblClientes')"/>
+          </div>
+          <table id="tblClientes">
+            <thead><tr><th>Identificación</th><th>Nombre</th><th>Correo</th><th>Celular</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td>1001234567</td><td>Ana Martínez</td><td>ana@cecar.edu.co</td><td>301 234 5678</td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">✏️</button> <button class="btn btn-danger btn-sm" onclick="rippleBtn(this)">🗑️</button></td></tr>
+              <tr><td>1009876543</td><td>Carlos Pérez</td><td>carlos@gmail.com</td><td>315 987 6543</td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">✏️</button> <button class="btn btn-danger btn-sm" onclick="rippleBtn(this)">🗑️</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+ 
+      <!-- VENTAS -->
+      <div class="content-page" id="page-ventas">
+        <div class="page-header anim-fade"><h2>🛒 Gestión de Ventas</h2><p>Registra y consulta ventas de libros</p></div>
+        <div class="form-card anim-fade">
+          <h3>Registrar Venta</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Identificación del cliente *</label><input type="text" placeholder="No. de cédula"/></div>
+            <div class="form-group"><label>No. Comprobante *</label><input type="text" placeholder="Ej. COMP-001"/></div>
+          </div>
+          <div class="form-group"><label>Observaciones</label><textarea rows="2" placeholder="Notas adicionales de la venta..."></textarea></div>
+          <div style="background:var(--green-light);border-radius:var(--radius-sm);padding:16px;margin:12px 0">
+            <div style="font-size:13px;font-weight:700;color:var(--green-dark);margin-bottom:12px">Ítems de venta</div>
+            <div class="form-row">
+              <div class="form-group"><label>Libro (ID)</label><input type="number" placeholder="ID del libro"/></div>
+              <div class="form-group"><label>Lote</label><input type="text" placeholder="Ej. LOTE-A"/></div>
+            </div>
+            <div class="form-group"><label>Cantidad</label><input type="number" placeholder="1" min="1"/></div>
+            <button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">+ Agregar ítem</button>
+          </div>
+          <button class="btn btn-primary" onclick="rippleBtn(this);showToast('✅ Venta registrada correctamente')">Registrar venta</button>
+        </div>
+        <div class="table-wrap anim-fade" style="animation-delay:.15s">
+          <div class="table-toolbar">
+            <input type="date" style="max-width:160px"/>
+            <input type="date" style="max-width:160px"/>
+            <input type="text" placeholder="🔍 Buscar por cliente o libro..."/>
+          </div>
+          <table id="tblVentas">
+            <thead><tr><th>Comprobante</th><th>Cliente</th><th>Fecha</th><th>Ítems</th><th>Total</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td>COMP-001</td><td>Ana Martínez</td><td>2026-05-01</td><td>2 libros</td><td>$170.000</td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">👁</button></td></tr>
+              <tr><td>COMP-002</td><td>Carlos Pérez</td><td>2026-05-03</td><td>1 libro</td><td>$72.000</td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">👁</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+ 
+      <!-- INVENTARIO -->
+      <div class="content-page" id="page-inventario">
+        <div class="page-header anim-fade"><h2>📦 Inventario</h2><p>Consulta el stock disponible por lote</p></div>
+        <div class="table-wrap anim-fade">
+          <div class="table-toolbar">
+            <input type="text" placeholder="🔍 Buscar por lote o libro..." oninput="filterTable(this,'tblInventario')"/>
+            <button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">🔄 Actualizar</button>
+          </div>
+          <table id="tblInventario">
+            <thead><tr><th>Lote</th><th>Libro</th><th>Unidades ingresadas</th><th>Stock disponible</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td>LOTE-A</td><td>Cálculo Integral</td><td>30</td><td><span class="badge badge-green">24</span></td><td><span class="badge badge-green">Disponible</span></td></tr>
+              <tr><td>LOTE-B</td><td>Álgebra Lineal</td><td>20</td><td><span class="badge badge-gold">5</span></td><td><span class="badge badge-gold">Bajo stock</span></td></tr>
+              <tr><td>LOTE-A</td><td>Física I</td><td>10</td><td><span class="badge badge-red">0</span></td><td><span class="badge badge-red">Agotado</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+ 
+      <!-- INGRESOS -->
+      <div class="content-page" id="page-ingresos">
+        <div class="page-header anim-fade"><h2>📥 Ingresos de Inventario</h2><p>Registra entradas de libros al inventario</p></div>
+        <div class="form-card anim-fade">
+          <h3>Registrar Ingreso</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Libro (ID) *</label><input type="number" placeholder="ID del libro"/></div>
+            <div class="form-group"><label>Unidades *</label><input type="number" placeholder="0" min="1"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Lote *</label><input type="text" placeholder="Ej. LOTE-2026-A"/></div>
+            <div class="form-group"><label>Valor de compra ($) *</label><input type="number" placeholder="0.00" step="0.01"/></div>
+          </div>
+          <div class="form-group"><label>Valor de venta público ($)</label><input type="number" placeholder="0.00" step="0.01"/></div>
+          <button class="btn btn-primary" onclick="rippleBtn(this);showToast('✅ Ingreso registrado correctamente')" style="margin-top:8px">Registrar ingreso</button>
+        </div>
+        <div class="table-wrap anim-fade" style="animation-delay:.15s">
+          <div class="table-toolbar">
+            <input type="date" style="max-width:160px"/>
+            <input type="date" style="max-width:160px"/>
+            <input type="text" placeholder="🔍 Buscar por lote o libro..."/>
+          </div>
+          <table><thead><tr><th>Fecha</th><th>Libro</th><th>Lote</th><th>Unidades</th><th>V. Compra</th><th>V. Venta</th></tr></thead>
+          <tbody>
+            <tr><td>2026-04-15</td><td>Cálculo Integral</td><td>LOTE-A</td><td>30</td><td>$60.000</td><td>$85.000</td></tr>
+            <tr><td>2026-04-20</td><td>Álgebra Lineal</td><td>LOTE-B</td><td>20</td><td>$50.000</td><td>$72.000</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+ 
+      <!-- LOTES -->
+      <div class="content-page" id="page-lotes">
+        <div class="page-header anim-fade"><h2>🏷️ Gestión de Lotes</h2><p>Crea y consulta los lotes del sistema</p></div>
+        <div class="form-card anim-fade">
+          <h3>Crear Lote</h3>
+          <div class="form-group"><label>Identificador del lote *</label><input type="text" placeholder="Ej. LOTE-2026-C"/></div>
+          <button class="btn btn-primary" onclick="rippleBtn(this);showToast('✅ Lote creado correctamente')" style="margin-top:8px">Crear lote</button>
+        </div>
+        <div class="table-wrap anim-fade" style="animation-delay:.1s">
+          <div class="table-toolbar"><input type="text" placeholder="🔍 Buscar lote..."/></div>
+          <table><thead><tr><th>Lote</th><th>Fecha creación</th><th>Libros asociados</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-blue">LOTE-A</span></td><td>2026-04-10</td><td>2</td></tr>
+            <tr><td><span class="badge badge-blue">LOTE-B</span></td><td>2026-04-18</td><td>1</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+ 
+      <!-- USUARIOS (admin only) -->
+      <div class="content-page" id="page-usuarios">
+        <div class="page-header anim-fade"><h2>⚙️ Gestión de Usuarios</h2><p>Administra usuarios y roles del sistema</p></div>
+        <div class="form-card anim-fade">
+          <h3>Registrar / Actualizar Usuario</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Identificación</label><input type="text" placeholder="Opcional"/></div>
+            <div class="form-group"><label>Nombres completos *</label><input type="text" placeholder="Nombre y apellidos"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Correo electrónico *</label><input type="email" placeholder="correo@cecar.edu.co"/></div>
+            <div class="form-group"><label>Contraseña *</label><input type="password" placeholder="Mín. 8 caracteres"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Rol</label>
+              <select><option>Administrador</option><option>Bibliotecario / Operador</option><option>Consulta / Invitado</option></select>
+            </div>
+            <div class="form-group"><label>Estado</label>
+              <select><option>Activo</option><option>Inactivo</option></select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:8px">
+            <button class="btn btn-primary" onclick="rippleBtn(this);showToast('✅ Usuario guardado correctamente')">Guardar usuario</button>
+            <button class="btn btn-secondary" onclick="rippleBtn(this)">Limpiar</button>
+          </div>
+        </div>
+        <div class="table-wrap anim-fade" style="animation-delay:.15s">
+          <div class="table-toolbar">
+            <input type="text" placeholder="🔍 Buscar por nombre o rol..." oninput="filterTable(this,'tblUsuarios')"/>
+          </div>
+          <table id="tblUsuarios">
+            <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td>Admin Principal</td><td>admin@cecar.edu.co</td><td><span class="badge badge-blue">Administrador</span></td><td><span class="badge badge-green">Activo</span></td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">✏️</button></td></tr>
+              <tr><td>María López</td><td>maria@cecar.edu.co</td><td><span class="badge badge-gold">Bibliotecario</span></td><td><span class="badge badge-green">Activo</span></td><td><button class="btn btn-secondary btn-sm" onclick="rippleBtn(this)">✏️</button> <button class="btn btn-danger btn-sm" onclick="openModal('modalDesactivar')">🚫</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+ 
+    </main>
+  </div><!-- end app-body -->
+</div><!-- end appShell -->
+ 
+<!-- TOAST -->
+<div id="toast">✅ Acción realizada</div>
+ 
+<!-- MODAL desactivar usuario -->
+<div class="modal-overlay" id="modalDesactivar">
+  <div class="modal">
+    <h3>⚠️ Confirmar acción</h3>
+    <p style="font-size:14px;color:var(--muted)">¿Estás seguro de que deseas <strong>desactivar</strong> a este usuario? Perderá acceso al sistema.</p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modalDesactivar')">Cancelar</button>
+      <button class="btn btn-danger" onclick="rippleBtn(this);closeModal('modalDesactivar');showToast('🚫 Usuario desactivado')">Desactivar</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+// ── STATE ──
+let currentUser = null;
+let currentRole = 'admin';
+ 
+// ── LOGIN ──
+function doLogin(e) {
+  const btn = document.getElementById('loginBtn');
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  let ok = true;
+ 
+  document.getElementById('emailErr').style.display = 'none';
+  document.getElementById('passErr').style.display  = 'none';
+ 
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('emailErr').style.display = 'block'; ok = false;
+  }
+  if (!pass || pass.length < 4) {
+    document.getElementById('passErr').style.display = 'block'; ok = false;
+  }
+  if (!ok) return;
+ 
+  rippleBtn(btn);
+  btn.innerHTML = '<span class="spinner"></span> Ingresando...';
+  btn.disabled = true;
+ 
+  setTimeout(() => {
+    currentRole = document.getElementById('loginRole').value;
+    currentUser = email.split('@')[0];
+    initApp();
+  }, 900);
+}
+ 
+function initApp() {
+  document.getElementById('loginPage').style.display = 'none';
+  const app = document.getElementById('appShell');
+  app.style.display = 'flex';
+ 
+  const names = {admin:'Administrador',bibliotecario:'Bibliotecario',consulta:'Invitado'};
+  document.getElementById('userNameDisplay').textContent = currentUser;
+  document.getElementById('userRoleDisplay').textContent = names[currentRole];
+  document.getElementById('userAvatar').textContent = currentUser[0].toUpperCase();
+ 
+  // Role-based visibility
+  const adminEls = document.querySelectorAll('.admin-only');
+  adminEls.forEach(el => el.style.display = currentRole === 'admin' ? '' : 'none');
+ 
+  // Load fake stats
+  setTimeout(() => {
+    document.getElementById('statLibros').textContent   = '42';
+    document.getElementById('statStock').textContent    = '318';
+    document.getElementById('statClientes').textContent = '87';
+    document.getElementById('statVentas').textContent   = '215';
+  }, 600);
+ 
+  showPage('dashboard');
+  showToast('👋 Bienvenido, ' + currentUser);
+}
+ 
+function doLogout() {
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('loginBtn').innerHTML = 'Ingresar al sistema';
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPass').value  = '';
+}
+ 
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.content-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  const nav  = document.getElementById('nav-' + id);
+  if (page) page.classList.add('active');
+  if (nav)  nav.classList.add('active');
+}
+ 
+// ── FILTER TABLE ──
+function filterTable(input, tableId) {
+  const q = input.value.toLowerCase();
+  const rows = document.querySelectorAll('#' + tableId + ' tbody tr');
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+ 
+// ── RIPPLE BUTTON ──
+function rippleBtn(btn) {
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  r.style.left = (event.clientX - rect.left) + 'px';
+  r.style.top  = (event.clientY - rect.top)  + 'px';
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+}
+ 
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+ 
+// ── MODAL ──
+function openModal(id)  { document.getElementById(id).classList.add('open') }
+function closeModal(id) { document.getElementById(id).classList.remove('open') }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open') });
+});
+ 
+// Enter key on login
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginPage').style.display !== 'none') {
+    document.getElementById('loginBtn').click();
+  }
+});
+</script>
+</body>
+</html>

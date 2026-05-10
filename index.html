@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BiblioCECAR</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <div id="loginPage">
+    <div class="login-left">
+      <div class="login-logo-area anim-fade">
+        <img src="recursos/logo-cecar-corporacion-universitaria-del-caribe.webp" alt="CECAR" onerror="this.style.display='none'">
+        <h1>Biblio<span>CECAR</span></h1>
+        <p>Sistema de gestión integral de biblioteca universitaria - CECAR</p>
+      </div>
+      <img src="recursos/images.png" alt="Biblioteca" class="login-book-img anim-fade" style="animation-delay:.2s" onerror="this.style.display='none'">
+    </div>
+
+    <div class="login-right anim-slide">
+      <h2>Iniciar Sesión</h2>
+      <p class="sub">Ingresa tus credenciales para acceder al sistema</p>
+
+      <div class="form-group">
+        <label for="loginEmail">Correo electrónico</label>
+        <input type="email" id="loginEmail" placeholder="correo@yopmail.com">
+        <span class="error-msg" id="emailErr">Ingresa un correo válido</span>
+      </div>
+
+      <div class="form-group">
+        <label for="loginPass">Contraseña</label>
+        <input type="password" id="loginPass" placeholder="Mínimo 4 caracteres">
+        <span class="error-msg" id="passErr">La contraseña debe tener mínimo 4 caracteres</span>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="loginBtn" onclick="doLogin(event)">
+        Ingresar al sistema
+      </button>
+
+      <p class="api-note">
+        API REST:
+        <a href="https://api.smartbooks.cecar.cloud/index.html" target="_blank">api.smartbooks.cecar.cloud</a>
+      </p>
+    </div>
+  </div>
+
+  <div id="appShell">
+    <header class="topbar">
+      <a class="topbar-logo" href="#" onclick="goHome();return false">
+        <img src="recursos/logo-cecar-corporacion-universitaria-del-caribe.webp" alt="CECAR" onerror="this.style.display='none'">
+        <span>Biblio<em>CECAR</em></span>
+      </a>
+
+      <div class="topbar-spacer"></div>
+
+      <div class="topbar-user">
+        <div class="avatar" id="userAvatar">A</div>
+        <div>
+          <div id="userNameDisplay">Usuario</div>
+          <div class="topbar-role" id="userRoleDisplay">Administrador</div>
+        </div>
+      </div>
+
+      <button class="topbar-logout" onclick="doLogout()">Cerrar sesión</button>
+    </header>
+
+    <div class="app-body">
+      <nav class="sidebar">
+        <div class="sidebar-section role-admin role-bibliotecario">Principal</div>
+        <div class="sidebar-link role-admin role-bibliotecario active" onclick="showPage('dashboard')" id="nav-dashboard">
+          <span class="icon">🏠</span> Dashboard
+        </div>
+
+        <div class="sidebar-section">Gestión</div>
+
+        <div class="sidebar-link role-admin role-bibliotecario role-consulta" onclick="showPage('libros')" id="nav-libros">
+          <span class="icon">📚</span> Libros
+        </div>
+
+        <div class="sidebar-link role-admin role-bibliotecario" onclick="showPage('clientes')" id="nav-clientes">
+          <span class="icon">👥</span> Clientes
+        </div>
+
+        <div class="sidebar-link role-admin role-bibliotecario" onclick="showPage('ventas')" id="nav-ventas">
+          <span class="icon">🛒</span> Ventas
+        </div>
+
+        <div class="sidebar-link role-admin role-bibliotecario role-consulta" onclick="showPage('inventario')" id="nav-inventario">
+          <span class="icon">📦</span> Inventario
+        </div>
+
+        <div class="sidebar-link role-admin role-bibliotecario" onclick="showPage('ingresos')" id="nav-ingresos">
+          <span class="icon">📥</span> Ingresos
+        </div>
+
+        <div class="sidebar-link role-admin role-bibliotecario" onclick="showPage('lotes')" id="nav-lotes">
+          <span class="icon">🏷️</span> Lotes
+        </div>
+
+        <div class="sidebar-section role-admin">Admin</div>
+        <div class="sidebar-link role-admin" onclick="showPage('usuarios')" id="nav-usuarios">
+          <span class="icon">⚙️</span> Usuarios
+        </div>
+
+        <div class="sidebar-section">Cuenta</div>
+        <div class="sidebar-link role-admin role-bibliotecario role-consulta" onclick="showPage('perfil')" id="nav-perfil">
+          <span class="icon">👤</span> Perfil
+        </div>
+      </nav>
+
+      <main class="main-content">
+
+        <section class="content-page active" id="page-dashboard">
+          <div class="dashboard-hero anim-fade">
+            <div class="dashboard-welcome">
+              <h2>Panel de control BiblioCECAR</h2>
+              <p>Administra catálogo, inventario, clientes, ventas, ingresos y lotes desde un panel central preparado para operación diaria.</p>
+              <div class="dashboard-actions">
+                <button class="btn btn-light" onclick="showPage('libros')">Registrar libro</button>
+                <button class="btn btn-light" onclick="showPage('ventas')">Nueva venta</button>
+                <button class="btn btn-light" onclick="showPage('inventario')">Ver inventario</button>
+              </div>
+            </div>
+
+            <aside class="dashboard-summary">
+              <h3>Resumen operativo</h3>
+              <div class="summary-line"><span>Libros activos</span><strong id="dashLibrosMini">0</strong></div>
+              <div class="summary-line"><span>Stock disponible</span><strong id="dashStockMini">0</strong></div>
+              <div class="summary-line"><span>Ventas registradas</span><strong id="dashVentasMini">0</strong></div>
+              <div class="summary-line"><span>Lotes creados</span><strong id="dashLotesMini">0</strong></div>
+            </aside>
+          </div>
+
+          <div class="dashboard-stats anim-fade">
+            <div class="dashboard-stat">
+              <div class="dashboard-stat-top"><div class="dashboard-stat-icon">📚</div><span class="badge badge-green">Catálogo</span></div>
+              <div class="num" id="statLibros">0</div>
+              <div class="lbl">Libros registrados</div>
+              <small>Total de títulos guardados en el sistema.</small>
+            </div>
+
+            <div class="dashboard-stat">
+              <div class="dashboard-stat-top"><div class="dashboard-stat-icon">📦</div><span class="badge badge-blue">Inventario</span></div>
+              <div class="num" id="statStock">0</div>
+              <div class="lbl">Unidades en stock</div>
+              <small>Suma de unidades disponibles para venta.</small>
+            </div>
+
+            <div class="dashboard-stat">
+              <div class="dashboard-stat-top"><div class="dashboard-stat-icon">👥</div><span class="badge badge-gold">Clientes</span></div>
+              <div class="num" id="statClientes">0</div>
+              <div class="lbl">Clientes registrados</div>
+              <small>Compradores guardados con sus datos básicos.</small>
+            </div>
+
+            <div class="dashboard-stat">
+              <div class="dashboard-stat-top"><div class="dashboard-stat-icon">🛒</div><span class="badge badge-green">Ventas</span></div>
+              <div class="num" id="statVentas">0</div>
+              <div class="lbl">Ventas realizadas</div>
+              <small>Movimientos que descuentan inventario.</small>
+            </div>
+          </div>
+
+          <div class="dashboard-grid anim-fade">
+            <section class="dashboard-panel">
+              <div class="panel-head">
+                <div>
+                  <h3>Módulos principales</h3>
+                  <p>Accesos rápidos con descripción de cada sección.</p>
+                </div>
+              </div>
+              <div class="module-list" id="modulesGrid"></div>
+            </section>
+
+            <div class="dashboard-side">
+              <section class="dashboard-panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>Stock para revisar</h3>
+                    <p>Libros agotados o con pocas unidades.</p>
+                  </div>
+                </div>
+                <div class="stock-list" id="dashLowStock"></div>
+              </section>
+
+              <section class="dashboard-panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>Actividad reciente</h3>
+                    <p>Últimas ventas e ingresos registrados.</p>
+                  </div>
+                </div>
+                <div class="activity-list" id="dashRecentActivity"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-libros">
+          <div class="page-header">
+            <h2>📚 Gestión de Libros</h2>
+            <p>Consulta, registra y actualiza el catálogo de libros.</p>
+          </div>
+
+          <div class="form-card editor-only">
+            <h3 id="libroFormTitle">Registrar / Actualizar Libro</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Nombre *</label><input type="text" id="libroNombre" placeholder="Ej. Cálculo Integral"></div>
+              <div class="form-group"><label>Nivel *</label><input type="text" id="libroNivel" placeholder="Ej. Universitario"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tipo *</label>
+                <select id="libroTipo">
+                  <option value="">Seleccionar tipo</option>
+                  <option value="1">Student's Book</option>
+                  <option value="2">Workbook</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Edición *</label><input type="text" id="libroEdicion" placeholder="Ej. 3ra edición"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Unidades *</label><input type="number" id="libroUnidades" placeholder="0" min="0"></div>
+              <div class="form-group"><label>Lote *</label><input type="text" id="libroLote" placeholder="Ej. LOTE-2026-A"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Valor de compra ($) *</label><input type="number" id="libroCompra" placeholder="0.00" step="0.01" min="0"></div>
+              <div class="form-group"><label>Valor de venta público ($) *</label><input type="number" id="libroVenta" placeholder="0.00" step="0.01" min="0"></div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="saveLibro(event)">Guardar libro</button>
+              <button class="btn btn-secondary" onclick="clearLibroForm(event)">Limpiar</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input type="text" placeholder="🔍 Buscar por ID, nombre, nivel, tipo, edición o lote..." oninput="filterTable(this,'tblLibros')">
+              <button class="btn btn-secondary btn-sm" onclick="exportLibros(event)">Exportar</button>
+            </div>
+            <div class="table-scroll">
+              <table id="tblLibros">
+                <thead><tr><th>ID</th><th>Nombre</th><th>Nivel</th><th>Tipo</th><th>Edición</th><th>Stock</th><th>Venta</th><th>Lote</th><th>Acciones</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-clientes">
+          <div class="page-header">
+            <h2>👥 Gestión de Clientes</h2>
+            <p>Registra y consulta los clientes del sistema.</p>
+          </div>
+
+          <div class="form-card">
+            <h3>Registrar / Actualizar Cliente</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Identificación *</label><input type="text" id="clienteId" placeholder="No. de cédula"></div>
+              <div class="form-group"><label>Nombres completos *</label><input type="text" id="clienteNombre" placeholder="Nombre y apellidos"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Correo electrónico *</label><input type="email" id="clienteCorreo" placeholder="correo@ejemplo.com"></div>
+              <div class="form-group"><label>Celular *</label><input type="tel" id="clienteCelular" placeholder="300 000 0000"></div>
+            </div>
+            <div class="form-group"><label>Fecha de nacimiento *</label><input type="date" id="clienteNacimiento"></div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="saveCliente(event)">Guardar cliente</button>
+              <button class="btn btn-secondary" onclick="clearClienteForm(event)">Limpiar</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-toolbar"><input type="text" placeholder="🔍 Buscar por nombre, identificación o correo..." oninput="filterTable(this,'tblClientes')"></div>
+            <div class="table-scroll">
+              <table id="tblClientes">
+                <thead><tr><th>Identificación</th><th>Nombre</th><th>Correo</th><th>Celular</th><th>Acciones</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-ventas">
+          <div class="page-header">
+            <h2>🛒 Gestión de Ventas</h2>
+            <p>Registra ventas, calcula totales y descuenta unidades del inventario.</p>
+          </div>
+
+          <div class="form-card">
+            <h3>Registrar Venta</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Identificación del cliente *</label><input type="text" id="ventaCliente" placeholder="No. de cédula"></div>
+              <div class="form-group"><label>No. Comprobante *</label><input type="text" id="ventaComprobante" placeholder="Ej. COMP-003"></div>
+            </div>
+            <div class="form-group"><label>Observaciones</label><textarea rows="2" id="ventaObs" placeholder="Notas adicionales de la venta..."></textarea></div>
+
+            <div class="sale-box">
+              <div class="sale-box-title">Ítems de venta</div>
+              <div class="form-row">
+                <div class="form-group"><label>Libro (ID) *</label><input type="number" id="ventaLibroId" placeholder="Ej. 1"></div>
+                <div class="form-group"><label>Lote *</label><input type="text" id="ventaLote" placeholder="Ej. LOTE-A"></div>
+              </div>
+              <div class="form-group"><label>Cantidad *</label><input type="number" id="ventaCantidad" placeholder="1" min="1"></div>
+              <button class="btn btn-secondary btn-sm" onclick="addSaleItem(event)">+ Agregar ítem</button>
+              <div class="sale-items-preview" id="saleItemsPreview"></div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveVenta(event)">Registrar venta</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input type="date" id="ventasDesde" style="max-width:160px" onchange="filterVentas()">
+              <input type="date" id="ventasHasta" style="max-width:160px" onchange="filterVentas()">
+              <input type="text" id="ventasSearch" placeholder="🔍 Buscar por cliente, libro o comprobante..." oninput="filterVentas()">
+            </div>
+            <div class="table-scroll">
+              <table id="tblVentas">
+                <thead><tr><th>Comprobante</th><th>Cliente</th><th>Fecha</th><th>Ítems</th><th>Total</th><th>Acciones</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-inventario">
+          <div class="page-header">
+            <h2>📦 Inventario</h2>
+            <p>Consulta el stock disponible por libro y lote.</p>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input type="text" placeholder="🔍 Buscar por lote, libro o estado..." oninput="filterTable(this,'tblInventario')">
+              <button class="btn btn-secondary btn-sm" onclick="refreshInventario(event)">🔄 Actualizar</button>
+            </div>
+            <div class="table-scroll">
+              <table id="tblInventario">
+                <thead><tr><th>ID</th><th>Lote</th><th>Libro</th><th>Unidades ingresadas</th><th>Stock disponible</th><th>Estado</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-ingresos">
+          <div class="page-header">
+            <h2>📥 Ingresos de Inventario</h2>
+            <p>Registra entradas de libros al inventario.</p>
+          </div>
+
+          <div class="form-card">
+            <h3>Registrar Ingreso</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Libro (ID) *</label><input type="number" id="ingresoLibroId" placeholder="ID del libro"></div>
+              <div class="form-group"><label>Unidades *</label><input type="number" id="ingresoUnidades" placeholder="0" min="1"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Lote *</label><input type="text" id="ingresoLote" placeholder="Ej. LOTE-2026-A"></div>
+              <div class="form-group"><label>Valor de compra ($) *</label><input type="number" id="ingresoCompra" placeholder="0.00" step="0.01" min="0"></div>
+            </div>
+            <div class="form-group"><label>Valor de venta público ($) *</label><input type="number" id="ingresoVenta" placeholder="0.00" step="0.01" min="0"></div>
+            <button class="btn btn-primary" onclick="saveIngreso(event)">Registrar ingreso</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input type="date" id="ingresosDesde" style="max-width:160px" onchange="filterIngresos()">
+              <input type="date" id="ingresosHasta" style="max-width:160px" onchange="filterIngresos()">
+              <input type="text" id="ingresosSearch" placeholder="🔍 Buscar por lote o libro..." oninput="filterIngresos()">
+            </div>
+            <div class="table-scroll">
+              <table id="tblIngresos">
+                <thead><tr><th>Fecha</th><th>Libro</th><th>Lote</th><th>Unidades</th><th>V. Compra</th><th>V. Venta</th><th>Acciones</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-lotes">
+          <div class="page-header">
+            <h2>🏷️ Gestión de Lotes</h2>
+            <p>Crea y consulta los lotes del sistema.</p>
+          </div>
+
+          <div class="form-card">
+            <h3>Crear Lote</h3>
+            <div class="form-group"><label>Identificador del lote *</label><input type="text" id="loteId" placeholder="Ej. LOTE-2026-C"></div>
+            <button class="btn btn-primary" onclick="saveLote(event)">Crear lote</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-toolbar"><input type="text" placeholder="🔍 Buscar lote..." oninput="filterTable(this,'tblLotes')"></div>
+            <div class="table-scroll">
+              <table id="tblLotes">
+                <thead><tr><th>Lote</th><th>Fecha creación</th><th>Libros asociados</th><th>Acciones</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-usuarios">
+          <div class="page-header">
+            <h2>⚙️ Gestión de Usuarios</h2>
+            <p>Administra usuarios y roles del sistema.</p>
+          </div>
+
+          <div class="form-card">
+            <h3>Registrar / Actualizar Usuario</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Identificación</label><input type="text" id="usuarioId" placeholder="Opcional"></div>
+              <div class="form-group"><label>Nombres completos *</label><input type="text" id="usuarioNombre" placeholder="Nombre y apellidos"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Correo electrónico *</label><input type="email" id="usuarioCorreo" placeholder="correo@yopmail.com"></div>
+              <div class="form-group"><label>Contraseña *</label><input type="password" id="usuarioPass" placeholder="Minimo 8 caracteres"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Rol *</label>
+                <select id="usuarioRol">
+                  <option value="1">Administrador</option>
+                  <option value="2">Vendedor / Operador</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Estado *</label>
+                <select id="usuarioEstado">
+                  <option value="true">Activo</option>
+                  <option value="false">Inactivo</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="saveUsuario(event)">Guardar usuario</button>
+              <button class="btn btn-secondary" onclick="clearUsuarioForm(event)">Limpiar</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-toolbar"><input type="text" placeholder="🔍 Buscar por nombre, correo o rol..." oninput="filterTable(this,'tblUsuarios')"></div>
+            <div class="table-scroll">
+              <table id="tblUsuarios">
+                <thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-page" id="page-perfil">
+          <div class="page-header">
+            <h2>👤 Perfil de Usuario</h2>
+            <p>Consulta la información del usuario autenticado.</p>
+          </div>
+
+          <div class="profile-grid">
+            <div class="profile-card">
+              <div class="profile-avatar" id="profileAvatar">A</div>
+              <h3 id="profileName">Usuario</h3>
+              <p id="profileRole">Administrador</p>
+            </div>
+
+            <div class="form-card">
+              <h3>Información de sesión</h3>
+              <div class="form-row">
+                <div class="form-group"><label>Usuario</label><input type="text" id="profileUser" disabled></div>
+                <div class="form-group"><label>Correo</label><input type="text" id="profileEmail" disabled></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Rol</label><input type="text" id="profileRoleInput" disabled></div>
+                <div class="form-group"><label>Estado</label><input type="text" value="Activo" disabled></div>
+              </div>
+              <button class="btn btn-secondary" onclick="showToast('Perfil consultado correctamente')">Consultar perfil</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast">Acción realizada</div>
+
+  <div class="modal-overlay" id="modalInfo">
+    <div class="modal">
+      <h3 id="modalTitle">Detalle</h3>
+      <div id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modalInfo')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalConfirm">
+    <div class="modal">
+      <h3 id="confirmTitle">Confirmar acción</h3>
+      <p id="confirmText"></p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modalConfirm')">Cancelar</button>
+        <button class="btn btn-danger" id="confirmActionBtn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
