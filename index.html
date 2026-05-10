@@ -25,7 +25,7 @@
 
       <div class="form-group">
         <label for="loginEmail">Correo electrónico</label>
-        <input type="email" id="loginEmail" placeholder="correo@yopmail.com">
+        <input type="email" id="loginEmail" placeholder="correo@cecar.edu.co">
         <span class="error-msg" id="emailErr">Ingresa un correo válido</span>
       </div>
 
@@ -33,6 +33,15 @@
         <label for="loginPass">Contraseña</label>
         <input type="password" id="loginPass" placeholder="Mínimo 4 caracteres">
         <span class="error-msg" id="passErr">La contraseña debe tener mínimo 4 caracteres</span>
+      </div>
+
+      <div class="form-group">
+        <label for="loginRole">Rol de acceso</label>
+        <select id="loginRole">
+          <option value="admin">Administrador</option>
+          <option value="bibliotecario">Bibliotecario / Operador</option>
+          <option value="consulta">Consulta / Invitado</option>
+        </select>
       </div>
 
       <button class="btn btn-primary btn-full" id="loginBtn" onclick="doLogin(event)">
@@ -215,8 +224,10 @@
                 <label>Tipo *</label>
                 <select id="libroTipo">
                   <option value="">Seleccionar tipo</option>
-                  <option value="1">Student's Book</option>
-                  <option value="2">Workbook</option>
+                  <option value="1">Texto académico</option>
+                  <option value="2">Investigación</option>
+                  <option value="3">Literatura</option>
+                  <option value="4">Referencia</option>
                 </select>
               </div>
               <div class="form-group"><label>Edición *</label><input type="text" id="libroEdicion" placeholder="Ej. 3ra edición"></div>
@@ -417,15 +428,16 @@
               <div class="form-group"><label>Nombres completos *</label><input type="text" id="usuarioNombre" placeholder="Nombre y apellidos"></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Correo electrónico *</label><input type="email" id="usuarioCorreo" placeholder="correo@yopmail.com"></div>
-              <div class="form-group"><label>Contraseña *</label><input type="password" id="usuarioPass" placeholder="Minimo 8 caracteres"></div>
+              <div class="form-group"><label>Correo electrónico *</label><input type="email" id="usuarioCorreo" placeholder="correo@cecar.edu.co"></div>
+              <div class="form-group"><label>Contraseña *</label><input type="password" id="usuarioPass" placeholder="Mín. 4 caracteres"></div>
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>Rol *</label>
                 <select id="usuarioRol">
                   <option value="1">Administrador</option>
-                  <option value="2">Vendedor / Operador</option>
+                  <option value="2">Bibliotecario / Operador</option>
+                  <option value="3">Consulta / Invitado</option>
                 </select>
               </div>
               <div class="form-group">
